@@ -10,7 +10,7 @@ const sections = [
 title:"الفضائل",
 icon:"⭐",
 description:"فَضَائِلُ العِلْمِ وَالقُرْآنِ وَالذِّكْرِ",
-categories:[
+categoraies:[
 {
 title:"الفضائل",
 topics:[
@@ -372,6 +372,22 @@ topics:[
 }
 ];
 
+// قائمة موحّدة للموضوعات: تحافظ على أرقام أبواب الكتاب حتى مع وجود فجوات في الترقيم.
+const allTopics = sections.flatMap(section =>
+    section.categories.flatMap(category =>
+        category.topics.map(topic => ({
+            id: Number(topic[0]),
+            title: topic[1],
+            page: topic[2] ?? null,
+            section: section.title,
+            category: category.title
+        }))
+    )
+).sort((a, b) => a.id - b.id);
+const totalTopicCount = allTopics.length;
+const topicById = new Map(allTopics.map(topic => [topic.id, topic]));
+
+
 
 /* ==========================================================
    تحويل البيانات والنصوص
@@ -690,7 +706,7 @@ function renderBook() {
                 <div class="topic-row">
                     <button class="topic" onclick="openTopic(${id})" aria-label="فتح الحديث: ${name}">
                         <span class="number">${id}</span>
-                        <span class="topic-name">${name}</span>
+                        <span class="topic-name">${name}${t[2] != null ? `<small class="topic-page">ص ${t[2]}</small>` : ''}</span>
                         <span class="topic-status">
                             ${isSaved ? '🧠 ' : ''}
                             ${isFav ? '❤️ ' : ''}${bookmarkTopics.includes(id) ? '🔖' : ''}
@@ -721,17 +737,12 @@ function openTopic(id) {
     document.getElementById('topicPage').classList.add('active');
     window.scrollTo(0, 0);
 
-    let titleText = "";
-    sections.forEach(sec => {
-        sec.categories.forEach(cat => {
-            cat.topics.forEach(t => {
-                if(t[0] === id) titleText = t[1];
-            });
-        });
-    });
+    const topic = topicById.get(Number(id));
+    const titleText = topic ? topic.title : `الموضوع رقم ${id}`;
+    const pageLabel = topic && topic.page != null ? ` · صفحة ${topic.page}` : '';
 
     document.getElementById('topicHead').innerHTML = `
-        <small>الموضوع رقم (${id})</small>
+        <small>الموضوع رقم (${id})${pageLabel}</small>
         <h2>${titleText}</h2>
     `;
 
@@ -746,10 +757,9 @@ function openTopic(id) {
 
 /* دالة التنقل السلس بين الموضوعات والأقسام باستخدام الأسهم */
 function navigateTopic(direction) {
-    let nextId = currentTopicId + direction;
-    if(nextId >= 1 && nextId <= 142) {
-        openTopic(nextId);
-    }
+    const index = allTopics.findIndex(topic => topic.id === Number(currentTopicId));
+    const next = allTopics[index + Number(direction)];
+    if(next) openTopic(next.id);
 }
 
 function home() {
@@ -850,8 +860,8 @@ function updateActionButtons() {
 }
 
 function updateStats() {
-    let total = 142;
-    let saved = savedTopics.length;
+    const total = totalTopicCount;
+    let saved = savedTopics.filter(id => topicById.has(Number(id))).length;
     let fav = favoriteTopics.length;
 
     document.getElementById('total').innerText = total;
@@ -927,9 +937,9 @@ function showMemory() {
 
 function renderContinueHome() {
     const box=document.getElementById('continueReading'); if(!box) return;
-    if(lastReadTopic) {
-        let name=''; sections.forEach(sec=>sec.categories.forEach(cat=>cat.topics.forEach(t=>{if(t[0]===lastReadTopic) name=t[1];})));
-        box.hidden=false; box.innerHTML=`<span>📖</span><div><strong>متابعة القراءة</strong><small>${name}</small></div><button onclick="openTopic(${lastReadTopic})">متابعة ←</button>`;
+    if(lastReadTopic && topicById.has(Number(lastReadTopic))) {
+        const topic = topicById.get(Number(lastReadTopic));
+        box.hidden=false; box.innerHTML=`<span>📖</span><div><strong>متابعة القراءة</strong><small>${topic.title}${topic.page != null ? ` · ص ${topic.page}` : ''}</small></div><button onclick="openTopic(${lastReadTopic})">متابعة ←</button>`;
     } else box.hidden=true;
 }
 
@@ -1049,7 +1059,7 @@ function handleAudioEnded() {
     localStorage.removeItem('audioPos_' + currentTopicId);
     document.getElementById('audioPlayBtn').innerText = '▶ سماع الحديث';
     repeatingAudio = false;
-    if(document.getElementById('autoNext').checked && currentTopicId < 142) navigateTopic(1);
+    if(document.getElementById('autoNext').checked) navigateTopic(1);
 }
 
 function toggleAudio() {
