@@ -35,7 +35,7 @@
 
 <div class="hero">
 
-<h2>السلام عليكم 👋</h2>
+<h2>السلام عليكم ورحمة الله وبركاته👋</h2>
 
 <p>
 تصفح الأبواب وتابع حفظك بسهولة
@@ -56,8 +56,25 @@ oninput="search()">
 </div>
 
 <div class="search-tools">
-<button type="button" onclick="clearSearch()" aria-label="مسح البحث">✕</button>
-<button type="button" onclick="showAdvancedSearch()" aria-label="خيارات البحث">⚙️</button>
+<button type="button" onclick="clearSearch()" aria-label="مسح البحث" title="مسح البحث">✕</button>
+<button type="button" onclick="showAdvancedSearch()" aria-label="خيارات البحث" title="خيارات البحث" aria-expanded="false" id="advancedSearchToggle">⚙️</button>
+</div>
+<div id="advancedSearchPanel" class="advanced-search-panel" hidden>
+  <label for="searchField">ابحث في</label>
+  <select id="searchField" onchange="search()">
+    <option value="all">العناوين والنصوص والأبواب</option>
+    <option value="title">عناوين الموضوعات فقط</option>
+    <option value="text">نصوص المتون فقط</option>
+    <option value="category">أسماء الأبواب والأقسام</option>
+  </select>
+  <label for="searchFilter">تصفية النتائج</label>
+  <select id="searchFilter" onchange="search()">
+    <option value="all">كل الموضوعات</option>
+    <option value="saved">الموضوعات المحفوظة</option>
+    <option value="favorites">المفضلة</option>
+    <option value="bookmarks">العلامات المرجعية</option>
+    <option value="due">المستحقة للمراجعة</option>
+  </select>
 </div>
 
 </div>
@@ -78,7 +95,7 @@ oninput="search()">
 
 <div class="stat">
 <div class="icon">📚</div>
-<strong id="total">247</strong>
+<strong id="total">142</strong>
 <small>موضوعًا</small>
 </div>
 
@@ -98,26 +115,50 @@ oninput="search()">
 
 <div id="book"></div>
 
-<!-- قسم نسبة المحفوظ المحسن والجذاب -->
-<div class="progress-container">
-    <div class="progress-header-row">
-        <div class="progress-title-wrapper">
-            <span>🎯</span>
-            <h3>رحلة الحفظ والمراجعة</h3>
-        </div>
-        <div class="progress-badge" id="percentBadge">0% منجز</div>
+<!-- رحلة الحفظ بمؤشر دائري -->
+<div id="journeyProgress" class="progress-container journey-card">
+  <div class="journey-heading">
+    <div class="journey-emblem" aria-hidden="true"><span>م</span></div>
+    <div class="journey-heading-text">
+      <p class="journey-kicker">رِحْلَةُ التَّعَلُّمِ وَالإِتْقَان</p>
+      <h3>رحلتك مع متن الأذكار والآداب</h3>
+      <p class="journey-subtitle">خطوةٌ في العلم، وأثرٌ يبقى بإذن الله</p>
     </div>
+    <div class="progress-badge" id="percentBadge">0% منجز</div>
+  </div>
 
-    <div class="progress-bar-wrap">
-        <div id="fill" class="progress-fill-bar"></div>
+  <div class="journey-main">
+    <div class="journey-arch" aria-label="نسبة إتمام الحفظ">
+      <div class="journey-arch-inner">
+        <strong id="archPercent">0%</strong>
+        <small>منجز</small>
+      </div>
     </div>
+    <div class="journey-details">
+      <div class="hadith-panel">
+        <p class="hadith-attribution">قال النبي صلى الله عليه وسلم:</p>
+        <p class="hadith-text">«نَضَّرَ اللَّهُ امْرَأً سَمِعَ مَقَالَتِي فَوَعَاهَا وَحَفِظَهَا وَأَدَّاهَا كَمَا سَمِعَهَا، فَرُبَّ حَامِلِ فِقْهٍ إِلَى مَنْ هُوَ أَفْقَهُ مِنْهُ، وَرُبَّ حَامِلِ فِقْهٍ لَيْسَ بِفَقِيهٍ»</p>
+      </div>
+      <div class="journey-progress-labels"><span id="progressMotivation">ابدأ رحلتك المباركة، وكل خطوة لها أثر.</span><strong id="savedCountText">0 / 142 موضوعًا</strong></div>
+      <div class="progress-bar-wrap journey-bar"><div id="fill" class="progress-fill-bar"></div></div>
+      <div class="journey-small-note">واصل، فكل بابٍ تتعلمه خطوةٌ في طريق العلم</div>
+    </div>
+  </div>
 
-    <div class="progress-footer-text">
-        <span id="progressMotivation">خطوة بخطوة نحو إتمام الحفظ! ✨</span>
-        <span id="savedCountText">0 / 247 موضوعاً</span>
-    </div>
+  <div class="stages-heading"><h4>مراحل رحلتك في الكتاب</h4></div>
+  <div class="journey-stages" id="journeyStages">
+    <div class="journey-stage" data-stage="1"><span class="stage-number">١</span><b>المرحلة الأولى</b><small>(فضل طلب العلم) — (الوسوسة في الصلاة)</small></div>
+    <div class="journey-stage" data-stage="2"><span class="stage-number">٢</span><b>المرحلة الثانية</b><small>(الركوع) — (الاستخارة)</small></div>
+    <div class="journey-stage" data-stage="3"><span class="stage-number">٣</span><b>المرحلة الثالثة</b><small>(من أحس بوجع) — (الرجوع من السفر)</small></div>
+    <div class="journey-stage" data-stage="4"><span class="stage-number">٤</span><b>المرحلة الرابعة</b><small>(التلبية) — (ما يقول إذا استيقظ)</small></div>
+    <div class="journey-stage" data-stage="5"><span class="stage-number">٥</span><b>المرحلة الخامسة</b><small>(الرؤيا الصالحة) — (الاستغفار والتوبة)</small></div>
+    <div class="journey-stage" data-stage="6"><span class="stage-number">٦</span><b>المرحلة السادسة</b><small>(إذا عصفت الريح) — (التصوير)</small></div>
+    <div class="journey-stage" data-stage="7"><span class="stage-number">٧</span><b>المرحلة السابعة</b><small>(تعاهد القرآن) — (التثاؤب)</small></div>
+    <div class="journey-stage" data-stage="8"><span class="stage-number">٨</span><b>المرحلة الثامنة</b><small>(تحريم الإسبال) — (الفراغ من الأكل والشرب)</small></div>
+    <div class="journey-stage" data-stage="9"><span class="stage-number">٩</span><b>المرحلة التاسعة</b><small>(الطريق) — (الكذب لإضحاك الناس)</small></div>
+    <div class="journey-stage" data-stage="10"><span class="stage-number">١٠</span><b>المرحلة العاشرة</b><small>(حسن الخلق) — (نهاية الكتاب)</small></div>
+  </div>
 </div>
-
 </section>
 
 <!-- الموضوع -->
@@ -280,6 +321,11 @@ onclick="playAudio()">
 المفضلة
 </button>
 
+<button type="button" id="progressNav" onclick="document.getElementById('journeyProgress').scrollIntoView({behavior:'smooth',block:'start'})">
+<span>◉</span>
+التقدم
+</button>
+
 <button id="bookmarkNav" onclick="showBookmarks()">
 <span>🔖</span>
 العلامات
@@ -294,7 +340,42 @@ onclick="playAudio()">
 
 </div>
 
+    <section id="memoryQuiz" class="quiz-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="quizTitle">
+      <div class="quiz-card">
+        <button type="button" class="quiz-close" onclick="closeMemoryTest()" aria-label="إغلاق الاختبار">×</button>
+        <p class="quiz-kicker">اختبار الاستذكار</p>
+        <h2 id="quizTitle">هل تتذكر النص؟</h2>
+        <p id="quizTopicName" class="quiz-topic-name"></p>
+        <p class="quiz-prompt">حاول استحضار المتن من ذاكرتك قبل إظهار الإجابة.</p>
+        <div id="quizAnswer" class="quiz-answer" hidden></div>
+        <section class="recitation-panel" aria-labelledby="recitationTitle">
+          <div class="recitation-heading">
+            <h3 id="recitationTitle">التسميع بالصوت</h3>
+            <p>أخفِ النص، ثم اقرأ المتن بصوت واضح. سيقارن الموقع كلامك بالنص الأصلي.</p>
+          </div>
+          <div class="recitation-actions">
+            <button type="button" id="startRecitationBtn" class="action primary" onclick="startVoiceRecitation()">🎙️ ابدأ التسميع</button>
+            <button type="button" id="stopRecitationBtn" class="action quiz-hard" onclick="stopVoiceRecitation()" disabled>إيقاف ومقارنة</button>
+            <button type="button" id="clearRecitationBtn" class="action" onclick="clearVoiceRecitation()">إعادة المحاولة</button>
+          </div>
+          <p id="recitationStatus" class="recitation-status" role="status" aria-live="polite">يتطلب التسميع السماح باستخدام الميكروفون ومتصفحًا يدعم التعرّف على الكلام العربي.</p>
+          <div id="recitationTranscript" class="recitation-transcript" aria-live="polite" hidden></div>
+          <div id="recitationComparison" class="recitation-comparison" hidden></div>
+          <div id="recitationGradeControls" class="quiz-grade-controls" hidden>
+            <p>اعتماد نتيجة التسميع وحفظ موعد المراجعة</p>
+            <button type="button" class="action quiz-easy" onclick="saveVoiceRecitationGrade(true)">أتقنت النص</button>
+            <button type="button" class="action quiz-hard" onclick="saveVoiceRecitationGrade(false)">أحتاج إلى مراجعة</button>
+          </div>
+        </section>
+        <button type="button" id="revealAnswerBtn" class="action primary quiz-reveal" onclick="revealMemoryAnswer()">إظهار الإجابة</button>
+        <div id="quizGradeControls" class="quiz-grade-controls" hidden>
+          <p>كيف كان استذكارك؟</p>
+          <button type="button" class="action quiz-easy" onclick="gradeMemoryTest(true)">أتقنت النص</button>
+          <button type="button" class="action quiz-hard" onclick="gradeMemoryTest(false)">أحتاج إلى مراجعة</button>
+        </div>
+      </div>
+    </section>
     <script src="script.js" defer></script>
 </body>
 </html>
-<!-- Audio files are expected in the audio/ folder; missing files use browser speech synthesis. -->
+<!-- Audio files are expected as audio/1.mp3 ... audio/142.mp3 -->
